@@ -11,6 +11,7 @@ Actors:
 - **BROWSER**: the web browser. It runs the APP and, in a second tab, the page where the USER authenticates with eSignet.
 - **USER**: the person who signs in.
 - **eSignet**: the identity provider (OpenID Connect server). The local installation used in the tests is described in [esignet_local_docker](https://github.com/alvaroecp/esignet_local_docker).
+
 Features:
  
 - Signs in with eSignet through the BACKEND. The APP does not talk to eSignet directly and does not receive its tokens: it only holds the BACKEND's `app_token`, in memory.
@@ -62,7 +63,8 @@ Requirements:
  
 - [Flutter](https://docs.flutter.dev/get-started/install) (stable channel, Dart `^3.14.0`) with Chrome. It was tested with Flutter 3.50.0 (Dart 3.14.0).
 - The BACKEND and eSignet running. See the BACKEND's README, which also says how to create the keys and register the client. In the tests, the BACKEND ran in WSL and the APP reached it through `localhost`.
-- A BACKEND with CORS enabled. It is the `cors()` middleware in `lib/cors_middleware.dart` of the BACKEND. It allows one origin, taken from the `ALLOWED_ORIGIN` variable; by default `http://localhost:4200`.
+- A BACKEND with CORS enabled (the browser rule that lets a page read responses from another origin). In the BACKEND it is the `cors()` middleware in `lib/cors_middleware.dart`, which allows one origin, taken from the `ALLOWED_ORIGIN` variable (by default `http://localhost:4200`).
+
 Start the BACKEND first, then run the APP from the project folder:
  
 ```bash
