@@ -17,8 +17,9 @@ Features:
 - Signs in with eSignet through the BACKEND. The APP does not talk to eSignet directly and does not receive its tokens: it only holds the BACKEND's `app_token`, in memory.
 - Shows the profile: photo, name and email.
 - Shows a Farmer Status screen (`lib/screens/farmer_status_screen.dart`), opened from the profile. It is a mock to simulate an eligibility check: it shows the name of the user and made-up data, such as "Eligible for input subsidy: Yes". It does not call the BACKEND.
-- Shows when the session expires, with a live countdown that compares the BACKEND's expiry time with the computer's clock. When it reaches zero, the APP signs out locally.
+- Shows when the session expires, with a live countdown that compares the BACKEND's expiry time with the computer's clock. When it reaches zero, the APP clears its local state, because the session has already expired in the BACKEND.
 - Signs out: ends the session in the BACKEND and clears the APP's local state.
+
 Built with Flutter (web, Dart `^3.14.0`), `material_ui` for the Material widgets, `http` for the requests and `web` to open the login tab.
  
 **Status.** Learning project. In the tests it worked end to end in Chrome on Windows, with the BACKEND in WSL. Known limitations: the BACKEND's URL is fixed in the code, there is no cancel button while the APP waits for the USER (it waits until the ticket expires, 300 s), some error messages are still in Spanish, the `app_token` is only in memory (reloading the page signs the USER out), only Chrome was tried, and it has no automated tests of its own.
@@ -55,7 +56,7 @@ When something goes wrong:
 | `status` does not return `200` (`403`, `404`, `410`…) | Stops polling and shows an error |
 | `status` returns `error` | Stops polling and shows an error: the sign-in failed at the provider |
 | No `complete` after `expires_in` seconds | Stops polling and shows a timeout error |
-| `me` returns `401`, or the countdown reaches zero | Signs out locally and asks the USER to sign in again |
+| `me` returns `401`, or the countdown reaches zero | Clears its local state and asks the USER to sign in again |
  
 ## Running
  
@@ -84,5 +85,5 @@ If the BROWSER's console shows a CORS error, the origin of the APP probably does
  
 These options were considered and not implemented:
  
-- **Sign in in the same tab.** It is the usual way on the web and avoids pop-up blockers. The APP would reload on return, so it would have to keep the ticket (for example in `sessionStorage`), and the BACKEND would have to redirect back to the APP, with a list of allowed destinations.
+- **Sign in on the same tab.** It is the usual way on the web and avoids pop-up blockers. The APP would reload on return, so it would have to keep the ticket (for example in `sessionStorage`), and the BACKEND would have to redirect back to the APP, with a list of allowed destinations.
 - **Session in an `HttpOnly` cookie.** It would keep the token out of reach of JavaScript and survive a reload. It needs changes in the BACKEND (cookie, `SameSite`, CORS with credentials).
